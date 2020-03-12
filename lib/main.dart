@@ -1,9 +1,10 @@
+import 'dart:convert' show json;
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'dart:convert';
 
-const request = "https://api.hgbrasil.com/finance?format=json&key=834c63c9";
-main() {
+const request = 'https://api.hgbrasil.com/finance?format=json&key=834c63c9';
+void main() {
   runApp(MaterialApp(
     home: Home(),
     theme: ThemeData(
@@ -12,15 +13,15 @@ main() {
         inputDecorationTheme: InputDecorationTheme(
           enabledBorder:
               OutlineInputBorder(borderSide: BorderSide(color: Colors.white)),
-          focusedBorder:
-              OutlineInputBorder(borderSide: BorderSide(color: Colors.greenAccent[400])),
+          focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.greenAccent[400])),
           hintStyle: TextStyle(color: Colors.greenAccent[400]),
         )),
   ));
 }
 
 Future<Map> getData() async {
-  http.Response response = await http.get(request);
+  final http.Response response = await http.get(request);
   return json.decode(response.body);
 }
 
@@ -41,7 +42,7 @@ class _HomeState extends State<Home> {
       _clearAll();
       return;
     }
-    double real = double.parse(text);
+    final double real = double.parse(text);
     dolarController.text = (real / dolar).toStringAsFixed(2);
     euroController.text = (real / euro).toStringAsFixed(2);
   }
@@ -51,7 +52,7 @@ class _HomeState extends State<Home> {
       _clearAll();
       return;
     }
-    double dolar = double.parse(text);
+    final double dolar = double.parse(text);
     realController.text = (dolar / this.dolar).toStringAsFixed(2);
     euroController.text = (dolar / this.dolar * euro).toStringAsFixed(2);
   }
@@ -61,15 +62,15 @@ class _HomeState extends State<Home> {
       _clearAll();
       return;
     }
-    double euro = double.parse(text);
+    final double euro = double.parse(text);
     realController.text = (euro / this.euro).toStringAsFixed(2);
     dolarController.text = (euro / this.euro / dolar).toStringAsFixed(2);
   }
 
   void _clearAll() {
-    realController.text = "";
-    dolarController.text = "";
-    euroController.text = "";
+    realController.text = '';
+    dolarController.text = '';
+    euroController.text = '';
   }
 
   @override
@@ -77,20 +78,21 @@ class _HomeState extends State<Home> {
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
-        title: Text("Conversor de moeda"),
+        title: const Text('Conversor de moeda'),
         backgroundColor: Colors.greenAccent[400],
         centerTitle: true,
       ),
       body: FutureBuilder<Map>(
           future: getData(),
-          builder: (context, snapshot) {
+          builder: (BuildContext context, AsyncSnapshot<Map> snapshot) {
             switch (snapshot.connectionState) {
               case ConnectionState.none:
               case ConnectionState.waiting:
                 return Center(
                   child: Text(
-                    "Carregando Dados...",
-                    style: TextStyle(color: Colors.greenAccent[400], fontSize: 25.0),
+                    'Carregando Dados...',
+                    style: TextStyle(
+                        color: Colors.greenAccent[400], fontSize: 25.0),
                     textAlign: TextAlign.center,
                   ),
                 );
@@ -98,17 +100,18 @@ class _HomeState extends State<Home> {
                 if (snapshot.hasError) {
                   return Center(
                     child: Text(
-                      "Erro...",
-                      style: TextStyle(color: Colors.greenAccent[400], fontSize: 25.0),
+                      'Erro...',
+                      style: TextStyle(
+                          color: Colors.greenAccent[400], fontSize: 25.0),
                       textAlign: TextAlign.center,
                     ),
                   );
                 } else {
-                  var data = snapshot.data["results"]["currencies"];
-                  dolar = data["USD"]["buy"];
-                  euro = data["EUR"]["buy"];
+                  final datas = snapshot.data['results']['currencies'];
+                  dolar = datas['USD']['buy'];
+                  euro = datas['EUR']['buy'];
                   return SingleChildScrollView(
-                    padding: EdgeInsets.all(10.0),
+                    padding: const EdgeInsets.all(10.0),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: <Widget>[
@@ -116,13 +119,13 @@ class _HomeState extends State<Home> {
                             size: 150.0, color: Colors.greenAccent[400]),
                         Divider(),
                         buildTextFiel(
-                            "Reais", "R\$", realController, _realChanged),
+                            'Reais', 'R\$', realController, _realChanged),
                         Divider(),
                         buildTextFiel(
-                            "Dolares", "US\$", dolarController, _dolarChanged),
+                            'Dolares', 'US\$', dolarController, _dolarChanged),
                         Divider(),
                         buildTextFiel(
-                            "Euros", "€\$", euroController, _euroChanged)
+                            'Euros', '€\$', euroController, _euroChanged)
                       ],
                     ),
                   );
@@ -142,7 +145,7 @@ Widget buildTextFiel(String label, String prefix,
     decoration: InputDecoration(
         labelText: label,
         labelStyle: TextStyle(color: Colors.greenAccent[400]),
-        border: OutlineInputBorder(),
+        border: const OutlineInputBorder(),
         prefixText: prefix),
     style: TextStyle(color: Colors.greenAccent[400], fontSize: 25),
   );
